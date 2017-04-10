@@ -1,0 +1,5 @@
+---
+glusterfs_daemon: glusterfs-server
+glusterfs_default_release: "3.10"
+gluster_volume_name: archive
+gluster_brick_dir: /0/items
