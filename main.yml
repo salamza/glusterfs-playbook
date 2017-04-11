@@ -5,26 +5,38 @@
     - vars.yml
 
   tasks:
-    - name: Add GlusterFS Debian.
+    - name: Ensure apt-transport-https is installed.
+      apt_repoistory:
+        name: apt-transport-https
+        state: present
+
+    - name: Add GlusterFS GPG key to apt.
+      apt_key:
+        url: "http://download.gluster.org/pub/gluster/glusterfs/LATEST/rsa.pub"
+        state: present
+
+    - name: Add GlusterFS latest Debian repo.
       apt_repository:
-        repo: deb https://download.gluster.org/pub/gluster/glusterfs/LATEST/Debian/{{DEBID}}/apt {{DEBVER}} main
+        repo: "deb http://download.gluster.org/pub/gluster/glusterfs/LATEST/Debian/{{ debian_version }}/apt {{ debian_version }} main"
         state: present
         filename: 'glusterfs'
         update_cache: yes
+      register: glusterfs_src_repo_added
 
-    - name: Ensure GlusterFS will reinstall if the PPA was just added.
+
+    - name: Ensure GlusterFS reinstall if source repo was added.
       apt:
         name: "{{ item }}"
         state: absent
       with_items:
         - glusterfs-server
         - glusterfs-client
+      when: glusterfs_src_repo_added.changed
 
     - name: Ensure GlusterFS is installed.
       apt:
         name: "{{ item }}"
         state: installed
-        default_release: "{{ glusterfs_default_release }}"
       with_items:
         - glusterfs-server
         - glusterfs-client
