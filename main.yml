@@ -6,7 +6,7 @@
 
   tasks:
     - name: Ensure apt-transport-https is installed.
-      apt_repoistory:
+      apt:
         name: apt-transport-https
         state: present
 
