@@ -1,5 +1,5 @@
 ---
 glusterfs_daemon: "glusterfs-server"
 gluster_volume_name: "archive"
-gluster_brick_dir: "/0/items"
+gluster_mount_directory: "/archive"
 debian_version: "jessie"
