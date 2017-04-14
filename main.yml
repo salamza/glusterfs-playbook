@@ -1,5 +1,6 @@
 ---
-- hosts: gluster-cluster
+- name: Deploy GlusterFS on Debian cluster
+  hosts: gluster-cluster
 
   vars_files:
     - vars.yml
@@ -49,6 +50,8 @@
         path: "/{{ item }}/items"
         state: directory
         mode: 0775
+        owner: root
+        group: root
       with_sequence: start=0 end=3
 
     - name: Ensure GlusterFS mount directories exist.
@@ -56,6 +59,8 @@
         path: "{{ gluster_mount_directory }}"
         state: directory
         mode: 0775
+        owner: root
+        group: root
 
     - name: Configure the active volume
       gluster_volume:
@@ -75,4 +80,3 @@
         fstype: glusterfs
         opts: "defaults,_netdev"
         state: mounted
-
