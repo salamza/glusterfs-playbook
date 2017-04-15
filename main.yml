@@ -1,6 +1,6 @@
 ---
 - name: Deploy GlusterFS on Debian cluster
-  hosts: gluster-cluster
+  hosts: gluster_cluster
 
   vars_files:
     - vars.yml
@@ -54,7 +54,7 @@
         group: root
       with_sequence: start=0 end=3
 
-    - name: Ensure GlusterFS mount directories exist.
+    - name: Ensure GlusterFS mount directories exist
       file:
         path: "{{ gluster_mount_directory }}"
         state: directory
