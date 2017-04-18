@@ -76,6 +76,8 @@
         host: "{{ inventory_hostname }}"
         force: yes
       with_sequence: start=0 end=3
+      async: 180
+      poll: 20
       run_once: true
 
     - name: Ensure Gluster volume is mounted
