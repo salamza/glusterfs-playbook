@@ -37,7 +37,7 @@
       with_items:
         - glusterfs-server
         - glusterfs-client
-      when: glusterfs_src_repo_added.changed
+      when: new_src_repo_added.changed
 
     - name: Ensure GlusterFS is installed
       apt:
