@@ -24,7 +24,6 @@
         update_cache: yes
       register: glusterfs_src_repo_added
 
-
     - name: Ensure GlusterFS reinstall if source repo was added
       apt:
         name: "{{ item }}"
@@ -67,7 +66,7 @@
         state: present
         name: "{{ gluster_volume_name }}"
         brick: "/{{ item }}/items"
-        cluster: "{{ groups.gluster_cluster | join(',') }}"
+        cluster: "{{ ansible_play_hosts | join(',') }}"
         host: "{{ inventory_hostname }}"
         force: yes
       with_sequence: start=0 end=3
