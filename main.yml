@@ -16,18 +16,28 @@
         url: "http://download.gluster.org/pub/gluster/glusterfs/LATEST/rsa.pub"
         state: present
 
-    - name: Add GlusterFS latest Debian repo
+    - name: Add GlusterFS latest Debian repo to 64 bit nodes
       apt_repository:
         repo: "deb http://download.gluster.org/pub/gluster/glusterfs/LATEST/Debian/{{ debian_version }}/apt {{ debian_version }} main"
         state: present
         filename: 'gluster'
         update_cache: yes
-      register: glusterfs_src_repo_added
+      register: new_src_repo_added
+      when: ansible_architecture == "x86_64"
+
+    - name: Add backports source repo to 32 bit nodes
+      apt_repository:
+        repo: "deb http://free.hands.com/debian {{ansible_distribution_release}}-backports main"
+        state: present
+        filename: '{{ansible_distribution_release}}-backports'
+        update_cache: yes
+      register: new_src_repo_added
+      when: ansible_architecture == "i386"
 
     - name: Ensure GlusterFS reinstall if source repo was added
       apt:
         name: "{{ item }}"
-        state: absent
+        state: latest
       with_items:
         - glusterfs-server
         - glusterfs-client
