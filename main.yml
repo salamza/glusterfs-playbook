@@ -6,15 +6,11 @@
     - vars.yml
 
   tasks:
-    - name: Ensure apt-transport-https is installed
-      apt:
-        name: apt-transport-https
-        state: present
-
     - name: Add GlusterFS GPG key to apt
       apt_key:
         url: "http://download.gluster.org/pub/gluster/glusterfs/LATEST/rsa.pub"
         state: present
+      when: ansible_architecture== "x86_64"
 
     - name: Add GlusterFS latest Debian repo to 64 bit nodes
       apt_repository:
