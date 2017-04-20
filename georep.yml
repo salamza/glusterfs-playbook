@@ -1,0 +1,8 @@
+---
+- name: Configure GlusterFS geo-replication on Debian clusters
+  hosts: gluster_cluster
+
+  vars_files:
+    - vars/georep.yml
+
+
