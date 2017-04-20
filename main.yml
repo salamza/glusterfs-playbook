@@ -6,6 +6,11 @@
     - vars/main.yml
 
   tasks:
+    - name: Variables Confirmation
+      pause:
+        prompt: "Volume name: {{ gluster_volume_name }}, Gluster mount: {{ gluster_mount_directory }}. \
+        Press return to continue. Press Ctrl+c and then a to abort"
+
     - name: Add GlusterFS GPG key to apt
       apt_key:
         url: "http://download.gluster.org/pub/gluster/glusterfs/LATEST/rsa.pub"
