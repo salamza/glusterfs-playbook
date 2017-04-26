@@ -1,10 +1,4 @@
 ---
-- name: Setup slave user for glusterfs < 3.9
-  user:
-    name: {{ gluster_georep_user }}
-    comment: "GlusterFS Geo-replication User"
-    group: {{ gluster_georep_user }}
-
 - name: Ensure mountbroker directory exists
   file:
     state: directory

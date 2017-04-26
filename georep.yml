@@ -10,6 +10,12 @@
       shell: dpkg -s glusterfs-server | grep Version | cut -d " " -f2
       register: glusterfs_version
 
+    - name: Setup slave user for glusterfs > 3.9
+      user:
+        name: {{ gluster_georep_user }}
+        comment: "GlusterFS Geo-replication User"
+        group: {{ gluster_georep_user }}
+
     - include: georep-pre3.9.yml
       when: glusterfs_version.stdout.find("3.8") != -1
 
