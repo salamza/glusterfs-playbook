@@ -1,0 +1,30 @@
+---
+- name: Setup slave user for glusterfs < 3.9
+  user:
+    name: {{ gluster_georep_user }}
+    comment: "GlusterFS Geo-replication User"
+    group: {{ gluster_georep_user }}
+
+- name: Ensure mountbroker directory exists
+  file:
+    state: directory
+    path: '/var/mountbroker-root'
+    owner: root
+    mode: 0711
+
+- name: Add mountbroker options to glusterd volume
+  command: "{{ item }}"
+  with_item:
+    - "gluster system:: execute mountbroker opt mountbroker-root /var/mountbroker-root"
+    - "gluster system:: execute mountbroker opt geo-replication-log-group {{ gluster_georep_user }}"
+    - "gluster system:: execute mountbroker opt rpc-auth-allow-insecure on"
+  run_once: true
+
+- name: Add Mountbroker user to glusterd volume
+  shell: "gluster system:: execute mountbroker user {{ gluster_georep_user }} {{ gluster_slave_node }}"
+  run_once: true
+
+- name: Restart glusterd
+  service:
+    name: glusterd
+    state: restarted
