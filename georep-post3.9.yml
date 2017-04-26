@@ -1,0 +1,19 @@
+---
+- name: Setup slave user for glusterfs > 3.9
+  user:
+    name: {{ gluster_georep_user }}
+    comment: "GlusterFS Geo-replication User"
+    group: {{ gluster_georep_user }}
+
+- name: Create mountbroker directory exists
+  shell: "gluster-mountbroker setup /var/mountbroker-root {{ gluster_georep_user }}"
+  run_once: true
+
+- name: Add Mountbroker user to glusterd volume
+  shell: "gluster-mountbroker add {{ gluster_slave_node }} {{ gluster_georep_user }}"
+  run_once: true
+
+- name: Restart glusterd
+  service:
+    name: glusterd
+    state: restarted
