@@ -1,5 +1,5 @@
 ---
-- name: Configure non-root GlusterFS geo-replication on Debian clusters
+- name: Configure GlusterFS geo-replication (non-root) on Debian clusters
   hosts: gluster_cluster
 
   vars_files:
@@ -16,13 +16,13 @@
         comment: "GlusterFS Geo-replication User"
         group: {{ gluster_georep_user }}
         state: present
-      when: inventory_hostname in groups['gluster_slave_cluster']
+      when: inventory_hostname in groups['gluster_slaves']
 
     - include: georep-pre3.9.yml
-      when: glusterfs_version.stdout.find("3.8") != -1
+      when: (glusterfs_version.stdout.find("3.8") != -1) and (inventory_hostname in groups['gluster_slaves'])
 
     - include: georep-post3.9.yml
-      when: glusterfs_version.stdout.find("3.10") != -1
+      when: (glusterfs_version.stdout.find("3.10") != -1) and (inventory_hostname in groups['gluster_slaves'])
 
 
     - name: Set up the environment for Geo-replication
@@ -36,12 +36,12 @@
 
     - name: Create secret pem pub file for glusterfs < 3.9
       shell: "gluster system:: execute gsec_create"
-      when: glusterfs_version.stdout.find("3.8") != -1 and inventory_hostname == {{ gluster_master_node }}
+      when: (glusterfs_version.stdout.find("3.8") != -1) and (inventory_hostname == {{ gluster_master_node }})
       run_once: true
 
     - name: Create secret pem pub file for glusterfs > 3.9
       shell: "gluster-georep-sshkey generate"
-      when: glusterfs_version.stdout.find("3.10") != -1 and inventory_hostname == {{ gluster_master_node }}
+      when: (glusterfs_version.stdout.find("3.10") != -1) and (inventory_hostname == {{ gluster_master_node }})
       run_once: true
 
     - name: Create geo-replication session
@@ -49,5 +49,12 @@
       when: inventory_hostname == {{ gluster_master_node }}
       run_once: true
 
+    - name: post-creation pem keys
+      shell: "/usr/libexec/glusterfs/set_geo_rep_pem_keys.sh {{ gluster_georep_user }} {{ gluster_master_volume }} {{ gluster_slave_volume }}"
+      when: inventory_hostname == {{ gluster_slave_node }}
+      run_once: true
 
-
+    - name: Start Geo-replication session
+      shell: "gluster volume geo-replication {{ gluster_master_volume }} {{ gluster_georep_user }}@{{ gluster_slave_node }}::{{ gluster_slave_volume }} start force"
+      when: inventory_hostname == {{ gluster_master_node }}
+      run_once: true
