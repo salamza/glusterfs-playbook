@@ -8,7 +8,7 @@
 
 - name: Add mountbroker options to glusterd volume
   command: "{{ item }}"
-  with_item:
+  with_items:
     - "gluster system:: execute mountbroker opt mountbroker-root /var/mountbroker-root"
     - "gluster system:: execute mountbroker opt geo-replication-log-group {{ gluster_georep_user }}"
     - "gluster system:: execute mountbroker opt rpc-auth-allow-insecure on"
