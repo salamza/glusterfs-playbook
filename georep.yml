@@ -10,12 +10,17 @@
       shell: dpkg -s glusterfs-server | grep Version | cut -d " " -f2
       register: glusterfs_version
 
-    - name: Setup slave user for glusterfs
-      user:
-        name: "{{ gluster_georep_user }}"
-        comment: "GlusterFS Geo-replication User"
-        group: "{{ gluster_georep_user }}"
-        state: present
+    - block:
+      - name: Setup slave group for glusterfs
+        group:
+          name: "{{ gluster_georep_user }}"
+          state: present
+      - name: Setup slave user for glusterfs
+        user:
+          name: "{{ gluster_georep_user }}"
+          comment: "GlusterFS Geo-replication User"
+          group: "{{ gluster_georep_user }}"
+          state: present
       when: inventory_hostname in groups['gluster_slaves']
 
     - include: georep-pre3.9.yml
