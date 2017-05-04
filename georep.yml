@@ -12,9 +12,9 @@
 
     - name: Setup slave user for glusterfs
       user:
-        name: {{ gluster_georep_user }}
+        name: "{{ gluster_georep_user }}"
         comment: "GlusterFS Geo-replication User"
-        group: {{ gluster_georep_user }}
+        group: "{{ gluster_georep_user }}"
         state: present
       when: inventory_hostname in groups['gluster_slaves']
 
